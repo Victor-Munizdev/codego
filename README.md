@@ -7,7 +7,7 @@ CodeGo é uma plataforma de ensino de programação que une teoria, prática e i
 - 🎥 Vídeos incorporados via YouTube ou link externo
 - ❓ Quiz interativo com opções aleatórias e apenas uma correta
 - 💻 Exercícios práticos de código, com avaliação automática por IA
-- 🤖*Correção automática inteligente (IA Gemini API)
+- 🤖Correção automática inteligente (IA Gemini API)
 - 👨‍🏫 Sistema de usuários e autenticação
 - 📈 Progresso do aluno salvo automaticamente
 - 🛠️ Painel Admin para cadastrar, editar e excluir aulas
