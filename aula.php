@@ -294,6 +294,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
+                   <div style="line-height: 1.6; margin-bottom: 2rem; color: #374151;">
+                        <?= nl2br(e($aula['teoria'])) ?>
+                    </div>
+
                 <?php if (!empty($aula['video'])): ?>
                     <div class="video-container">
                         <h3 style="margin-bottom: 1rem;">📹 Vídeo da Aula</h3>
@@ -312,8 +316,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             echo '<a href="' . e($aula['video']) . '" target="_blank" class="btn btn-primary">Assista o vídeo</a>';
                         }
                         ?>
-                    </div>
-                <?php endif; ?>
+                    </div
+                    <?php endif; ?>
+
 
                 <div class="card">
                     <h3 style="margin-bottom: 1.5rem; color: #374151;">
