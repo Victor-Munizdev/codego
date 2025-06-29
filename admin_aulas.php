@@ -31,6 +31,7 @@ function e($string) {
 $aula_form = [
     'titulo' => '',
     'descricao' => '',
+    'teoria' => '',
     'conteudo' => '',
     'tipo' => 'quiz',
     'dificuldade' => 'médio',
@@ -52,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dificuldade = $_POST['dificuldade'] ?? 'médio';
     $tipo = $_POST['tipo'] ?? 'quiz';
     $categoria = $_POST['categoria'] ?? 'lógica de programação';
+    $video = trim($_POST['video'] ?? '');
     $ordem = intval($_POST['ordem'] ?? $proxima_ordem);
 
     $valores_dificuldade = ['extremamente fácil', 'muito fácil', 'fácil', 'médio', 'difícil', 'muito difícil', 'extremamente difícil'];
@@ -69,10 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!$erro) {
-        // Geração do conteúdo da aula
-        $prompt_text = $tipo === 'quiz'
-            ? "Crie um exercício no formato QUIZ com título '$titulo', dificuldade '$dificuldade' e categoria '$categoria'. Gere a descrição teórica do exercício e pelo menos 3 perguntas com múltiplas opções e uma resposta correta para cada. Não use código exato na resposta."
-            : "Crie um exercício no formato CÓDIGO com título '$titulo', dificuldade '$dificuldade' e categoria '$categoria'. Gere a descrição teórica do exercício e um enunciado que permita ao usuário criar um código que será avaliado no final.";
+        if ($tipo === 'quiz') {
+            $prompt_text = "Crie um exercício no formato QUIZ com título '$titulo', dificuldade '$dificuldade' e categoria '$categoria'. \n\n1. Comece com uma teoria explicando o conceito para o aluno entender.\n2. Depois, adicione pelo menos 3 perguntas com múltiplas opções e uma correta para cada uma.\n\nRetorne a teoria primeiro, depois as questões.";
+        } else {
+            $prompt_text = "Crie um exercício no formato CÓDIGO com título '$titulo', dificuldade '$dificuldade' e categoria '$categoria'. \n\n1. Escreva uma teoria que explique o conceito principal usado.\n2. Em seguida, forneça um enunciado para o aluno escrever código e ser avaliado.";
+        }
 
         $prompt = [
             "contents" => [[
@@ -81,7 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]]
         ];
 
-        // Requisição para gerar conteúdo
         $curl = curl_init($GEMINI_API_URL . '?key=' . $GEMINI_API_KEY);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POST, true);
@@ -91,59 +93,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         curl_close($curl);
 
         $response_data = json_decode($response, true);
-
         if (isset($response_data['candidates'][0]['content']['parts'][0]['text'])) {
             $gerado = $response_data['candidates'][0]['content']['parts'][0]['text'];
+
             $partes = explode("\n\n", $gerado, 2);
-            $descricao = trim($partes[0]);
+            $teoria = trim($partes[0]);
             $conteudo = isset($partes[1]) ? trim($partes[1]) : '';
-
-            // 🔍 Prompt para buscar vídeo do YouTube
-            $prompt_video = [
-                "contents" => [[
-                    "role" => "user",
-                    "parts" => [[
-                        "text" => "Me forneça um link direto de um vídeo do YouTube que ensine a teoria sobre o seguinte assunto: '$titulo', na área de '$categoria'. Retorne apenas a URL do vídeo, sem nenhum texto adicional."
-                    ]]
-                ]]
-            ];
-
-            $curl = curl_init($GEMINI_API_URL . '?key=' . $GEMINI_API_KEY);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($prompt_video));
-            $response_video = curl_exec($curl);
-            curl_close($curl);
-
-            $video_url = '';
-            $video_data = json_decode($response_video, true);
-            if (isset($video_data['candidates'][0]['content']['parts'][0]['text'])) {
-                $url = trim($video_data['candidates'][0]['content']['parts'][0]['text']);
-                if (filter_var($url, FILTER_VALIDATE_URL) && preg_match('/youtu\.?be/', $url)) {
-                    $video_url = $url;
-                }
-            }
+            $descricao = $titulo;
 
             $aula_gerada = [
                 'titulo' => $titulo,
                 'descricao' => $descricao,
+                'teoria' => $teoria,
                 'conteudo' => $conteudo,
                 'tipo' => $tipo,
                 'dificuldade' => $dificuldade,
                 'categoria' => $categoria,
                 'ordem' => $ordem,
-                'video' => $video_url
+                'video' => $video
             ];
 
-            $stmt = $pdo->prepare("INSERT INTO aulas (titulo, descricao, tipo, conteudo, dificuldade, categoria, ordem, video, criado_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $res = $stmt->execute([$titulo, $descricao, $tipo, $conteudo, $dificuldade, $categoria, $ordem, $video_url]);
+            $stmt = $pdo->prepare("INSERT INTO aulas (titulo, descricao, teoria, tipo, conteudo, dificuldade, categoria, ordem, video, criado_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $res = $stmt->execute([$titulo, $descricao, $teoria, $tipo, $conteudo, $dificuldade, $categoria, $ordem, $video]);
 
             if ($res) {
                 $sucesso = "Aula gerada e cadastrada com sucesso!";
                 $aula_form = [
                     'titulo' => '',
                     'descricao' => '',
+                    'teoria' => '',
                     'conteudo' => '',
                     'tipo' => 'quiz',
                     'dificuldade' => 'médio',
@@ -161,7 +139,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt-BR">

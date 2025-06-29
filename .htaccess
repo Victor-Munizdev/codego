@@ -1,0 +1,16 @@
+RewriteEngine On
+RewriteBase /
+
+# Regras geradas automaticamente:
+RewriteRule ^excluir_aula$ excluir_aula.php [L,QSA]
+RewriteRule ^admin_aulas$ admin_aulas.php [L,QSA]
+RewriteRule ^editor$ editor.php [L,QSA]
+RewriteRule ^index$ index.php [L,QSA]
+RewriteRule ^logout$ logout.php [L,QSA]
+RewriteRule ^listar_aulas$ listar_aulas.php [L,QSA]
+RewriteRule ^editar_aula$ editar_aula.php [L,QSA]
+RewriteRule ^progresso$ progresso.php [L,QSA]
+RewriteRule ^aula$ aula.php [L,QSA]
+RewriteRule ^dashboard$ dashboard.php [L,QSA]
+RewriteRule ^register$ register.php [L,QSA]
+RewriteRule ^perfil$ perfil.php [L,QSA]
