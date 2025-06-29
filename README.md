@@ -1,5 +1,4 @@
-[logo](https://github.com/user-attachments/assets/40d3d523-1077-42c5-bfc3-b4f43b63e339)
-
+![Texto alternativo](logo.png)
 
 CodeGo é uma plataforma de ensino de programação que une teoria, prática e inteligência artificial. Os alunos aprendem por meio de aulas teóricas, vídeos e atividades interativas (quizzes e exercícios de código), com correção automática utilizando a IA do Google Gemini.
 
@@ -34,3 +33,11 @@ Cada aula contém:
 - JavaScript (interações do usuário)
 - HTML5 + CSS3 (layout responsivo e moderno)
 - Gemini API (Google AI) para correção automática e cadastro de aulas
+
+👮‍♂️ Permissões
+Aluno: acessa conteúdo e envia respostas
+Admin: pode cadastrar/editar/excluir aulas
+
+🧑‍🏫 Autor
+Desenvolvido por Victor Muniz
+Portfólio: https://portifolio.tech
