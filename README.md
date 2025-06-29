@@ -38,6 +38,5 @@ Cada aula contém:
 Aluno: acessa conteúdo e envia respostas
 Admin: pode cadastrar/editar/excluir aulas
 
-🧑‍🏫 Autor
-Desenvolvido por Victor Muniz
+🧑‍🏫 Desenvolvido por Victor Muniz
 Portfólio: https://portifolio.tech
